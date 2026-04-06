@@ -2,6 +2,12 @@
   width: 100%;
   margin: 0;
   padding: 0;
+  font-family: 'Comic Sans MS', 'Trebuchet MS', sans-serif;
+}
+
+body {
+  font-family: 'Comic Sans MS', 'Trebuchet MS', sans-serif;
+  background-color: #f9f7ff;
 }
 
 .gameContainer {
@@ -12,8 +18,8 @@
 
 .backButton {
   margin: 2rem;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
   color: white;
   background: rgba(255, 255, 255, 0.2);
@@ -21,6 +27,7 @@
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s;
+  font-family: 'Comic Sans MS', 'Trebuchet MS', sans-serif;
 }
 
 .backButton:hover {

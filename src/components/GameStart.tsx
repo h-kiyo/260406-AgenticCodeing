@@ -11,18 +11,21 @@ export const GameStart: React.FC<GameStartProps> = ({ onSelectDifficulty }) => {
       discCount: 3,
       description: '3枚のディスク',
       minMoves: 7,
+      explanation: '最少手数: 2³ - 1 = 7手',
     },
     {
       label: 'ふつう',
       discCount: 4,
       description: '4枚のディスク',
       minMoves: 15,
+      explanation: '最少手数: 2⁴ - 1 = 15手',
     },
     {
       label: 'むずかしい',
       discCount: 5,
       description: '5枚のディスク',
       minMoves: 31,
+      explanation: '最少手数: 2⁵ - 1 = 31手',
     },
   ];
 
@@ -34,25 +37,28 @@ export const GameStart: React.FC<GameStartProps> = ({ onSelectDifficulty }) => {
       </div>
 
       <div className={styles.rules}>
-        <h2>ルール</h2>
+        <h2>⭐ やることは？</h2>
         <ol>
-          <li>左のロッドにある色付きディスク（輪）をすべて右のロッドに移動します</li>
+          <li>📍 左から右へ、すべてのリングを動かそう</li>
           <li>
-            <strong>ルール1:</strong> 1回に1枚のディスクだけ移動できます
+            <strong>ルール1:</strong> 1回に1個だけ動かせます
           </li>
           <li>
-            <strong>ルール2:</strong>
-            大きいディスクは小さいディスクの下に置けません（小さいディスクの上には大きいディスクは置けません！）
+            <strong>ルール2:</strong> 大きいリングは小さいリングの下に置けません ❌
           </li>
-          <li>中央のロッド使ってもいいですよ</li>
+          <li>ヒント💡 真ん中のロッドも使えますよ</li>
         </ol>
       </div>
 
       <div className={styles.story}>
         <h3>📖 むかしむかしの物語</h3>
         <p>
-          インドの古いお寺では、3本の金の棒と64枚の金のディスクがありました。修行僧たちは、毎日1枚のディスクを移動させます。
-          すべてのディスクが別の棒に移った時、世界が終わるんだそうです...
+          インドの古いお寺では、3本の金の棒と64枚の金のディスクがありました。修行僧たちは毎日1枚のディスクを動かしています。
+          <strong>すべてのディスクが別の棒に移った時、世界が終わるんだそうです...</strong>
+        </p>
+        <p style={{ fontSize: '0.9rem', marginTop: '1rem' }}>
+          🔢 <strong>最少手数の秘密:</strong> n枚のディスクを動かすのに必要な最少手数は <strong>2<sup>n</sup> - 1</strong> 手です。
+          64枚の場合は約184京手! 毎秒1手でも1000年以上かかる計算です...
         </p>
       </div>
 
@@ -68,9 +74,7 @@ export const GameStart: React.FC<GameStartProps> = ({ onSelectDifficulty }) => {
             >
               <div className={styles.label}>{diff.label}</div>
               <div className={styles.description}>{diff.description}</div>
-              <div className={styles.moves}>
-                最少{diff.minMoves}手
-              </div>
+              <div className={styles.moves}>{diff.explanation}</div>
             </button>
           ))}
         </div>

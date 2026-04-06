@@ -6,6 +6,7 @@ declare const classes: {
   readonly info: string;
   readonly moveCount: string;
   readonly message: string;
+  readonly celebration: string;
   readonly resetButton: string;
   readonly rod: string;
   readonly rodBase: string;

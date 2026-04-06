@@ -10,13 +10,18 @@ interface HanoiGameProps {
 }
 
 const getCompletionMessage = (moveCount: number, minMoves: number): string => {
+  const efficiency = Math.round((minMoves / moveCount) * 100);
+
   if (moveCount === minMoves) {
-    return `🎉 パーフェクト！${moveCount}手で完成しました！`;
+    return `🎉 パーフェクト！${moveCount}手で完成！すごいぞ！🌟`;
   }
   if (moveCount <= minMoves + 2) {
-    return `🎉 すごい！${moveCount}手で完成しました！（最少は${minMoves}手）`;
+    return `🎉 すごい！${moveCount}手で完成！（最少${minMoves}手、達成度${efficiency}%）`;
   }
-  return `✨ 完成！${moveCount}手でした。（最少は${minMoves}手）`;
+  if (moveCount <= minMoves + 5) {
+    return `✨ 完成！${moveCount}手でした。（最少${minMoves}手、達成度${efficiency}%）`;
+  }
+  return `🎮 完成！${moveCount}手。(最少${minMoves}手、達成度${efficiency}%) 2^n-1を目指してね！`;
 };
 
 export const HanoiGameComponent: React.FC<HanoiGameProps> = ({
@@ -25,19 +30,34 @@ export const HanoiGameComponent: React.FC<HanoiGameProps> = ({
 }) => {
   const [game] = useState(() => new HanoiGameClass(discCount));
   const [rods, setRods] = useState(game.getRods());
-  const [selectedRod, setSelectedRod] = useState<number | null>(null);
+  const [selectedDisc, setSelectedDisc] = useState<{
+    rodIndex: number;
+    discSize: number;
+  } | null>(null);
   const [message, setMessage] = useState('');
   const [isComplete, setIsComplete] = useState(false);
 
-  const selectSourceRod = useCallback((rodIndex: number) => {
-    const currentRod = rods[rodIndex];
-    if (currentRod && currentRod.length > 0) {
-      setSelectedRod(rodIndex);
-      setMessage('移動先のロッドをタップ！');
-    } else {
-      setMessage('ここにはディスクがありません');
-    }
-  }, [rods]);
+  const selectSourceDisc = useCallback(
+    (rodIndex: number, discSize: number) => {
+      const currentRod = rods[rodIndex];
+      if (!currentRod || currentRod.length === 0) {
+        setMessage('💭 ここにはリングがないよ');
+        setSelectedDisc(null);
+        return;
+      }
+
+      const topDisc = currentRod[currentRod.length - 1];
+      if (topDisc !== discSize) {
+        setMessage('😅 その上のリングを先に動かしてね！');
+        setSelectedDisc(null);
+        return;
+      }
+
+      setSelectedDisc({ rodIndex, discSize });
+      setMessage('👉 移動先を選んでね！');
+    },
+    [rods]
+  );
 
   const handleGameComplete = useCallback(() => {
     setIsComplete(true);
@@ -48,52 +68,42 @@ export const HanoiGameComponent: React.FC<HanoiGameProps> = ({
 
   const moveDiscToTarget = useCallback(
     (targetRod: number) => {
-      if (selectedRod === null) {
+      if (selectedDisc === null) {
         return;
       }
 
-      const success = game.moveDisc(selectedRod, targetRod);
+      const success = game.moveDisc(selectedDisc.rodIndex, targetRod);
 
       if (!success) {
         setMessage(
-          '❌ そこには置けません！大きいディスクを選んでください'
+          '😅 あ、大きいリングは下に置けないんだった！もう一度やってみてね'
         );
-        setSelectedRod(null);
+        setSelectedDisc(null);
         return;
       }
 
       setRods(game.getRods());
-      setSelectedRod(null);
+      setSelectedDisc(null);
       setMessage('');
 
       if (game.isComplete()) {
         handleGameComplete();
       }
     },
-    [selectedRod, game, handleGameComplete]
+    [selectedDisc, game, handleGameComplete]
   );
 
-  const handleRodClick = useCallback(
-    (rodIndex: number) => {
+  const handleDiscClick = useCallback(
+    (rodIndex: number, discSize: number) => {
       if (isComplete) return;
 
-      if (selectedRod === null) {
-        selectSourceRod(rodIndex);
+      if (selectedDisc === null) {
+        selectSourceDisc(rodIndex, discSize);
       } else {
         moveDiscToTarget(rodIndex);
       }
     },
-    [selectedRod, isComplete, selectSourceRod, moveDiscToTarget]
-  );
-
-  const handleKeyDown = useCallback(
-    (rodIndex: number, event: React.KeyboardEvent<HTMLDivElement>) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        handleRodClick(rodIndex);
-      }
-    },
-    [handleRodClick]
+    [selectedDisc, isComplete, selectSourceDisc, moveDiscToTarget]
   );
 
   const handleReset = useCallback(() => {
@@ -104,27 +114,55 @@ export const HanoiGameComponent: React.FC<HanoiGameProps> = ({
     <div className={styles.container}>
       <div className={styles.gameBoard}>
         {rods.map((rod, rodIndex) => (
-          <div
-            key={rodIndex}
-            className={`${styles.rod} ${selectedRod === rodIndex ? styles.selected : ''}`}
-            onClick={() => handleRodClick(rodIndex)}
-            onKeyDown={(e) => handleKeyDown(rodIndex, e)}
+          <div 
+            key={rodIndex} 
+            className={styles.rod}
+            onClick={() => {
+              if (selectedDisc !== null) {
+                moveDiscToTarget(rodIndex);
+              }
+            }}
             role="button"
-            tabIndex={0}
+            tabIndex={selectedDisc !== null ? 0 : -1}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && selectedDisc !== null) {
+                e.preventDefault();
+                moveDiscToTarget(rodIndex);
+              }
+            }}
           >
             <div className={styles.rodBase} />
             <div className={styles.discsContainer}>
               {rod.map((discSize, discIndex) => {
                 const color = COLORS[discSize - 1];
                 const discId = `disc-${rodIndex}-${discSize}`;
+                const isSelected =
+                  selectedDisc?.rodIndex === rodIndex &&
+                  selectedDisc?.discSize === discSize;
+                const isTopDisc = discIndex === rod.length - 1;
                 return (
                   <div
                     key={discId}
-                    className={styles.disc}
+                    className={`${styles.disc} ${isSelected ? styles.selected : ''}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDiscClick(rodIndex, discSize);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleDiscClick(rodIndex, discSize);
+                      }
+                    }}
+                    role="button"
+                    tabIndex={isTopDisc ? 0 : -1}
                     style={{
                       width: `${30 + discSize * 20}px`,
                       backgroundColor: color,
                       bottom: `${discIndex * 30}px`,
+                      cursor: isTopDisc ? 'pointer' : 'not-allowed',
+                      opacity: isTopDisc ? 1 : 0.7,
                     }}
                   >
                     {discSize}
@@ -140,7 +178,11 @@ export const HanoiGameComponent: React.FC<HanoiGameProps> = ({
         <div className={styles.moveCount}>
           移動回数: <span>{game.getMoveCount()}</span> 回
         </div>
-        <div className={styles.message}>{message}</div>
+        <div
+          className={`${styles.message} ${isComplete ? styles.celebration : ''}`}
+        >
+          {message}
+        </div>
       </div>
 
       {isComplete && (

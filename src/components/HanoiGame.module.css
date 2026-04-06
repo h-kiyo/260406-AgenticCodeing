@@ -10,43 +10,36 @@
   align-items: flex-end;
   gap: 2rem;
   margin-bottom: 3rem;
-  min-height: 400px;
+  min-height: 500px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 20px;
-  padding: 2rem;
+  padding: 3rem 2rem;
 }
 
 .rod {
   display: flex;
   flex-direction: column;
   align-items: center;
-  cursor: pointer;
+  cursor: default;
   flex: 1;
   transition: transform 0.2s;
   user-select: none;
-}
-
-.rod:hover {
-  transform: scale(1.05);
-}
-
-.rod.selected {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  padding: 1rem;
+  position: relative;
+  height: 420px;
 }
 
 .rodBase {
-  width: 20px;
-  height: 300px;
+  width: 30px;
+  height: 380px;
   background-color: rgba(255, 255, 255, 0.3);
   border-radius: 10px;
-  position: relative;
 }
 
 .discsContainer {
   position: absolute;
   bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -54,16 +47,21 @@
 }
 
 .disc {
-  height: 28px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
   color: white;
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   transition: all 0.2s;
+}
+
+.disc.selected {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.8), 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .info {
@@ -75,7 +73,7 @@
 }
 
 .moveCount {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: bold;
   color: #333;
   margin-bottom: 1rem;
@@ -83,14 +81,22 @@
 
 .moveCount span {
   color: #667eea;
-  font-size: 2rem;
+  font-size: 2.5rem;
 }
 
 .message {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: #666;
-  min-height: 30px;
+  min-height: 40px;
   animation: fadeIn 0.3s ease-in;
+  font-weight: bold;
+}
+
+.message.celebration {
+  color: #667eea;
+  animation: celebrate 0.6s ease-out forwards, bounce 0.8s ease-in-out infinite;
+  font-weight: bold;
+  font-size: 1.6rem;
 }
 
 @keyframes fadeIn {
@@ -102,11 +108,34 @@
   }
 }
 
+@keyframes celebrate {
+  0% {
+    transform: scale(0.8) rotate(-5deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1) rotate(2deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
 .resetButton {
   display: block;
   margin: 0 auto;
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
+  padding: 1.2rem 3rem;
+  font-size: 1.3rem;
   font-weight: bold;
   color: white;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -114,9 +143,12 @@
   border-radius: 10px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
+  font-family: 'Comic Sans MS', 'Trebuchet MS', sans-serif;
 }
 
-.resetButton:hover {
+.resetButton:hover,
+.resetButton:focus {
   transform: translateY(-2px);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+  outline: 3px solid rgba(255, 255, 255, 0.5);
 }

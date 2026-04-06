@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ハノイの塔 - 楽しく学ぼう！</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗼 ハノイの塔へようこそ！</h1>
+            <p class="subtitle">すべてのリングを右の柱に移動させてみよう！</p>
+        </header>
+
+        <!-- 難易度選択 -->
+        <div class="difficulty-section">
+            <h2>難易度を選ぶ</h2>
+            <div class="difficulty-buttons">
+                <button class="difficulty-btn" onclick="startGame(3)" data-level="3">
+                    <span class="level">かんたん</span>
+                    <span class="rings">リング3個</span>
+                </button>
+                <button class="difficulty-btn" onclick="startGame(4)" data-level="4">
+                    <span class="level">ふつう</span>
+                    <span class="rings">リング4個</span>
+                </button>
+                <button class="difficulty-btn" onclick="startGame(5)" data-level="5">
+                    <span class="level">むずかしい</span>
+                    <span class="rings">リング5個</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ゲーム盤 -->
+        <div class="game-section" id="gameSection" style="display: none;">
+            <div class="info-bar">
+                <div class="info">
+                    <span>移動回数: <strong id="moveCount">0</strong></span>
+                    <span id="minMoves" style="color: #666;"></span>
+                </div>
+                <button class="reset-btn" onclick="resetGame()">やり直す</button>
+            </div>
+
+            <div class="game-board">
+                <!-- 左の柱 -->
+                <div class="column" id="column0">
+                    <div class="column-label">左</div>
+                    <div class="rings-container" ondrop="dropRing(event)" ondragover="allowDrop(event)">
+                        <div id="disc-0" class="ring" draggable="true" ondragstart="dragStart(event)" style="width: 120px; background: #FF6B6B;">1</div>
+                        <div id="disc-1" class="ring" draggable="true" ondragstart="dragStart(event)" style="width: 100px; background: #FFA500;">2</div>
+                        <div id="disc-2" class="ring" draggable="true" ondragstart="dragStart(event)" style="width: 80px; background: #4ECDC4;">3</div>
+                        <div id="disc-3" class="ring" draggable="true" ondragstart="dragStart(event)" style="width: 60px; background: #45B7D1; display: none;">4</div>
+                        <div id="disc-4" class="ring" draggable="true" ondragstart="dragStart(event)" style="width: 40px; background: #96CEB4; display: none;">5</div>
+                    </div>
+                </div>
+
+                <!-- 中央の柱 -->
+                <div class="column" id="column1">
+                    <div class="column-label">中央</div>
+                    <div class="rings-container" ondrop="dropRing(event)" ondragover="allowDrop(event)"></div>
+                </div>
+
+                <!-- 右の柱 -->
+                <div class="column" id="column2">
+                    <div class="column-label">右</div>
+                    <div class="rings-container" ondrop="dropRing(event)" ondragover="allowDrop(event)"></div>
+                </div>
+            </div>
+
+            <!-- クリアメッセージ -->
+            <div id="clearMessage" class="clear-message" style="display: none;">
+                <h2>🎉 クリア！おめでとう！</h2>
+                <p id="clearStats"></p>
+                <button onclick="resetGame()" class="play-again-btn">もう一度遊ぶ</button>
+            </div>
+        </div>
+
+        <!-- 説明セクション -->
+        <div class="explanation-section">
+            <h2>ハノイの塔ってなあに？</h2>
+            <div class="explanation-content">
+                <div class="rule">
+                    <h3>📋 ルール</h3>
+                    <ul>
+                        <li>✓ 大きなリングの上に小さなリングを置くことはできません</li>
+                        <li>✓ 1回に1つのリングだけ移動できます</li>
+                        <li>✓ すべてのリングを左の柱から右の柱に移動させましょう</li>
+                    </ul>
+                </div>
+                <div class="hint">
+                    <h3>💡 コツ</h3>
+                    <ul>
+                        <li>1. 小さいリングから移動し始めましょう</li>
+                        <li>2. 中央の柱を上手に使いましょう</li>
+                        <li>3. 最初は少ないリングから練習がおすすめ！</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- フッター -->
+        <footer>
+            <p>楽しく論理的思考を学ぼう！</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

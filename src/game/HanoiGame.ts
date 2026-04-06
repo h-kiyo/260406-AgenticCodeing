@@ -1,7 +1,13 @@
+export interface MoveRecord {
+  from: number;
+  to: number;
+}
+
 export class HanoiGame {
   private rods: number[][];
   private discCount: number;
   private moveCount = 0;
+  private moveHistory: MoveRecord[] = [];
 
   constructor(discCount: number) {
     this.discCount = discCount;
@@ -44,12 +50,21 @@ export class HanoiGame {
     fromRodArray.pop();
     toRodArray.push(disc);
     this.moveCount++;
+    this.moveHistory.push({ from: fromRod, to: toRod });
 
     return true;
   }
 
   getMoveCount(): number {
     return this.moveCount;
+  }
+
+  getMoveHistory(): MoveRecord[] {
+    return [...this.moveHistory];
+  }
+
+  getMinMoveCount(): number {
+    return 2 ** this.discCount - 1;
   }
 
   isComplete(): boolean {

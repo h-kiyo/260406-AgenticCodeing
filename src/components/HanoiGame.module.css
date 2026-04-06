@@ -4,6 +4,50 @@
   margin: 0 auto;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  color: #333;
+  margin: 0;
+}
+
+.modeToggle {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  background-color: #f0f0f0;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+}
+
+.modeToggle label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #333;
+}
+
+.modeToggle input[type="radio"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+.modeToggle input[type="radio"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .gameBoard {
   display: flex;
   justify-content: space-around;
@@ -26,6 +70,12 @@
   user-select: none;
   position: relative;
   height: 420px;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.rod[aria-dropeffect="move"] {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .rodBase {
@@ -41,12 +91,12 @@
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 2px;
+  justify-content: center;
 }
 
 .disc {
+  position: absolute;
   height: 36px;
   display: flex;
   align-items: center;
@@ -57,11 +107,19 @@
   font-size: 1.4rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   transition: all 0.2s;
+  user-select: none;
 }
 
 .disc.selected {
   transform: scale(1.1);
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.8), 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.disc.dragging {
+  opacity: 0.7;
+  transform: rotate(5deg) scale(1.05);
+  cursor: grabbing;
+  z-index: 1000;
 }
 
 .info {

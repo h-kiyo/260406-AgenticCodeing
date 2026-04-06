@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ハノイの塔 - 楽しく学ぼう！</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗼 ハノイの塔へようこそ！</h1>
+            <p class="subtitle">すべてのリングを右の柱に移動させてみよう！</p>
+        </header>
+
+        <!-- モード選択 -->
+        <div class="mode-section" id="modeSection">
+            <h2>📱 遊び方を選ぼう</h2>
+            <div class="mode-buttons">
+                <button class="mode-btn" onclick="selectMode('normal')" id="normalBtn" data-mode="normal">
+                    <span class="mode-emoji">🎮</span>
+                    <span class="mode-name">ノーマルモード</span>
+                    <span class="mode-desc">自分で考えながらプレイ</span>
+                </button>
+                <button class="mode-btn" onclick="selectMode('auto')" id="autoBtn" data-mode="auto">
+                    <span class="mode-emoji">⚡</span>
+                    <span class="mode-name">Autoモード</span>
+                    <span class="mode-desc">自動で解く様子を見る</span>
+                </button>
+                <button class="mode-btn" onclick="selectMode('story')" id="storyBtn" data-mode="story">
+                    <span class="mode-emoji">📖</span>
+                    <span class="mode-name">ストーリーモード</span>
+                    <span class="mode-desc">冒険の物語を楽しむ</span>
+                </button>
+                <button class="mode-btn" onclick="selectMode('timeatack')" id="timeatackBtn" data-mode="timeatack">
+                    <span class="mode-emoji">⏱️</span>
+                    <span class="mode-name">タイムアタック</span>
+                    <span class="mode-desc">速度を競ってランキング</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 難易度選択 -->
+        <div class="difficulty-section" id="difficultySection" style="display: none;">
+            <h2>難易度を選ぶ</h2>
+            <div class="difficulty-buttons">
+                <button class="difficulty-btn" onclick="startGame(3)" data-level="3">
+                    <span class="level">かんたん</span>
+                    <span class="rings">リング3個</span>
+                </button>
+                <button class="difficulty-btn" onclick="startGame(4)" data-level="4">
+                    <span class="level">ふつう</span>
+                    <span class="rings">リング4個</span>
+                </button>
+                <button class="difficulty-btn" onclick="startGame(5)" data-level="5">
+                    <span class="level">むずかしい</span>
+                    <span class="rings">リング5個</span>
+                </button>
+            </div>
+            <button class="back-btn" onclick="backToModeSelect()">← 戻る</button>
+        </div>
+
+        <!-- ゲーム盤 -->
+        <div class="game-section" id="gameSection" style="display: none;">
+            <!-- ストーリーモード用のナレーション -->
+            <div id="storyNarration" class="story-narration" style="display: none;">
+                <p id="storyText"></p>
+            </div>
+
+            <div class="info-bar">
+                <div class="info">
+                    <span>移動回数: <strong id="moveCount">0</strong></span>
+                    <span id="minMoves" style="color: #666;"></span>
+                    <span id="timeDisplay" style="color: #666; display: none;">時間: <strong id="elapsedTime">0:00</strong></span>
+                </div>
+                <div class="control-buttons">
+                    <button id="autoPlayBtn" class="auto-btn" onclick="toggleAutoPlay()" style="display: none;">⏸️ 停止</button>
+                    <button class="reset-btn" onclick="resetGame()">やり直す</button>
+                </div>
+            </div>
+
+            <div class="game-board">
+                <!-- 左の柱 -->
+                <div class="column" id="column0">
+                    <div class="column-label">左</div>
+                    <div class="rings-container" ondrop="dropRing(event)" ondragover="allowDrop(event)">
+                        <div id="disc-0" class="ring" draggable="true" ondragstart="dragStart(event)" style="width: 120px; background: #FF6B6B;">1</div>
+                        <div id="disc-1" class="ring" draggable="true" ondragstart="dragStart(event)" style="width: 100px; background: #FFA500;">2</div>
+                        <div id="disc-2" class="ring" draggable="true" ondragstart="dragStart(event)" style="width: 80px; background: #4ECDC4;">3</div>
+                        <div id="disc-3" class="ring" draggable="true" ondragstart="dragStart(event)" style="width: 60px; background: #45B7D1; display: none;">4</div>
+                        <div id="disc-4" class="ring" draggable="true" ondragstart="dragStart(event)" style="width: 40px; background: #96CEB4; display: none;">5</div>
+                    </div>
+                </div>
+
+                <!-- 中央の柱 -->
+                <div class="column" id="column1">
+                    <div class="column-label">中央</div>
+                    <div class="rings-container" ondrop="dropRing(event)" ondragover="allowDrop(event)"></div>
+                </div>
+
+                <!-- 右の柱 -->
+                <div class="column" id="column2">
+                    <div class="column-label">右</div>
+                    <div class="rings-container" ondrop="dropRing(event)" ondragover="allowDrop(event)"></div>
+                </div>
+            </div>
+
+            <!-- クリアメッセージ -->
+            <div id="clearMessage" class="clear-message" style="display: none;">
+                <h2>🎉 クリア！おめでとう！</h2>
+                <p id="clearStats"></p>
+                <button onclick="resetGame()" class="play-again-btn">もう一度遊ぶ</button>
+            </div>
+        </div>
+
+        <!-- 説明セクション -->
+        <div class="explanation-section">
+            <h2>ハノイの塔ってなあに？</h2>
+            <div class="explanation-content">
+                <div class="rule">
+                    <h3>📋 ルール</h3>
+                    <ul>
+                        <li>✓ 大きなリングの上に小さなリングを置くことはできません</li>
+                        <li>✓ 1回に1つのリングだけ移動できます</li>
+                        <li>✓ すべてのリングを左の柱から右の柱に移動させましょう</li>
+                    </ul>
+                </div>
+                <div class="hint">
+                    <h3>💡 コツ</h3>
+                    <ul>
+                        <li>1. 小さいリングから移動し始めましょう</li>
+                        <li>2. 中央の柱を上手に使いましょう</li>
+                        <li>3. 最初は少ないリングから練習がおすすめ！</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ランキングセクション -->
+        <div id="rankingSection" class="ranking-section" style="display: none;">
+            <h2>🏆 タイムアタック ランキング</h2>
+            <div class="ranking-container">
+                <div class="ranking-list">
+                    <h3>リング3個</h3>
+                    <ol id="ranking3" class="ranking-table"></ol>
+                </div>
+                <div class="ranking-list">
+                    <h3>リング4個</h3>
+                    <ol id="ranking4" class="ranking-table"></ol>
+                </div>
+                <div class="ranking-list">
+                    <h3>リング5個</h3>
+                    <ol id="ranking5" class="ranking-table"></ol>
+                </div>
+            </div>
+            <button class="back-btn" onclick="backToModeSelect()">← 戻る</button>
+        </div>
+
+        <!-- フッター -->
+        <footer>
+            <p>楽しく論理的思考を学ぼう！</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
